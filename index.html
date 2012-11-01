@@ -106,7 +106,7 @@ addCircleAxes = function() {
 
     circleAxes.append("svg:text")
       .attr("text-anchor", "left")
-      .attr("dy", function (d) { return -1 * radius(d); })
+      .attr("dy", function (d) { return -1 * d; })
       .text(String);
 };
 
