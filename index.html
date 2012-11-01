@@ -36,7 +36,7 @@ body {
 var width = 960,
     height = 500,
     radius = Math.min(width, height) / 2 - 10,
-    numTicks = 4,
+    numTicks = 5,
     sdat = [];
 
 var color = d3.scale.ordinal()
@@ -106,9 +106,9 @@ addCircleAxes = function() {
       .style("fill", "none");
 
     circleAxes.append("svg:text")
-      .attr("text-anchor", "left")
+      .attr("text-anchor", "center")
       .attr("dy", String)
-      .style("stroke", "#fff")
+      .style("color", "#fff")
       .text(function(d,i) { return i * (100/numTicks) });
 
 };
