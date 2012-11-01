@@ -60,7 +60,7 @@ var svg = d3.select("body").append("svg")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
 for (i=0; i<=numTicks; i++) {
-    sdat[i] = (15000000/numTicks) * i;
+    sdat[i] = (100/numTicks) * i;
 }
 
 d3.csv("data.csv", function(error, data) {
