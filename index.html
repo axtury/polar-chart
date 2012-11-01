@@ -34,7 +34,8 @@ var dataset = {
 
 var width = 960,
     height = 500,
-    radius = Math.min(width, height) / 2;
+    radius = Math.min(width, height) / 2,
+    gridlines = [(radius-20)*0.2, (radius-20)*0.4, (radius-20)*0.6, (radius-20)*0.8];
 
 var color = d3.scale.category20();
 
@@ -42,7 +43,7 @@ var pie = d3.layout.pie()
     .sort(null);
 
 var arc = d3.svg.arc()
-    .innerRadius(radius - 100)
+    .innerRadius(0)
     .outerRadius(radius - 20);
 
 var svg = d3.select("body").append("svg")
