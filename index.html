@@ -35,7 +35,8 @@ body {
 
 var width = 960,
     height = 500,
-    radius = Math.min(width, height) / 2 - 10;
+    radius = Math.min(width, height) / 2 - 10,
+    numTicks = 4;
 
 var color = d3.scale.ordinal()
     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
@@ -56,6 +57,10 @@ var svg = d3.select("body").append("svg")
     .attr("height", height)
   .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+for (i=0; i<=numticks; i++) {
+    sdat[i] = (15000000/numticks) * i;
+}
 
 d3.csv("data.csv", function(error, data) {
 
@@ -79,6 +84,31 @@ d3.csv("data.csv", function(error, data) {
         .style("text-anchor", "middle")
         .text(function(d) { return d.data.age; });
 
+     addCircleAxes();
 });
+
+
+addCircleAxes = function() {
+    var radialTicks = circleAxes, i;
+        
+    svg.selectAll('.circle-ticks').remove();
+        
+    circleAxes = svg.selectAll('.circle-ticks')
+      .data(sdat)
+      .enter().append('svg:g')
+      .attr("class", "circle-ticks");
+
+    circleAxes.append("svg:circle")
+      .attr("r", function (d, i) { return radius(d); })
+      .attr("class", "circle")
+      .style("stroke", "#CCC")
+      .style("opacity", 0.5)
+      .style("fill", "none");
+
+    circleAxes.append("svg:text")
+      .attr("text-anchor", "left")
+      .attr("dy", function (d) { return -1 * radius(d); })
+      .text(String);
+}
 
 </script>
