@@ -87,8 +87,6 @@ d3.csv("data.csv", function(error, data) {
 
 });
 
-addCircleAxes();
-
 addCircleAxes = function() {
     var circleAxes, i;
         
@@ -111,5 +109,7 @@ addCircleAxes = function() {
       .attr("dy", function (d) { return -1 * radius(d); })
       .text(String);
 };
+
+addCircleAxes();
 
 </script>
