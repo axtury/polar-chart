@@ -98,7 +98,7 @@ addCircleAxes = function() {
       .attr("class", "circle-ticks");
 
     circleAxes.append("svg:circle")
-      .attr("r", function (d, i) { return radius(d); })
+      .attr("r", String)
       .attr("class", "circle")
       .style("stroke", "#CCC")
       .style("opacity", 0.5)
