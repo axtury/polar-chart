@@ -58,9 +58,10 @@ var path = svg.selectAll("path")
     .attr("fill", function(d, i) { return color(i); })
     .attr("d", arc);
 
-var circles = path.enter().append("circle")
+var circles = svg.enter().append("circle")
                  .data(gridlines)
-                 .attr("r", function(d) {  return d; });
+                 .attr("r", function(d) {  return d; })
+                 .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");;
 
 d3.selectAll("input").on("change", change);
 
