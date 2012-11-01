@@ -107,7 +107,7 @@ addCircleAxes = function() {
 
     circleAxes.append("svg:text")
       .attr("text-anchor", "center")
-      .attr("dy", String)
+      .attr("dy", function(d) { return d - 1 })
       .style("fill", "#fff")
       .text(function(d,i) { return i * (100/numTicks) });
 
