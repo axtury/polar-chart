@@ -37,8 +37,7 @@ var width = 960,
     height = 500,
     radius = Math.min(width, height) / 2 - 10,
     numTicks = 4,
-    sdat = [],
-    circleAxes;
+    sdat = [];
 
 var color = d3.scale.ordinal()
     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
@@ -91,7 +90,7 @@ d3.csv("data.csv", function(error, data) {
 addCircleAxes();
 
 addCircleAxes = function() {
-    var radialTicks = circleAxes, i;
+    var circleAxes, i;
         
     svg.selectAll('.circle-ticks').remove();
         
@@ -111,6 +110,6 @@ addCircleAxes = function() {
       .attr("text-anchor", "left")
       .attr("dy", function (d) { return -1 * radius(d); })
       .text(String);
-}
+};
 
 </script>
