@@ -85,6 +85,7 @@ d3.csv("data.csv", function(error, data) {
         .style("text-anchor", "middle")
         .text(function(d) { return d.data.age; });
 
+    addCircleAxes();
 });
 
 addCircleAxes = function() {
@@ -109,7 +110,6 @@ addCircleAxes = function() {
       .attr("dy", function (d) { return -1 * d; })
       .text(String);
 
-    addCircleAxes();
 };
 
 </script>
