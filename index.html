@@ -3,48 +3,53 @@
 <style>
 
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  margin: auto;
-  position: relative;
-  width: 960px;
-}
-
-text {
   font: 10px sans-serif;
+  background: #333;
 }
 
-form {
-  position: absolute;
-  right: 10px;
-  top: 10px;
+.arc path {
+  stroke: #fff;
+    stroke-width: 2px;
+}
+
+.arc grid {
+    stroke: #fff;
+    stroke-width: 1;
+    stroke-dasharray: 5,5;
+}
+
+.arc text {
+    fill:#fff;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.arc line {
+  stroke: #fff;
 }
 
 </style>
-<form>
-  <label><input type="radio" name="dataset" value="apples" checked> Apples</label>
-  <label><input type="radio" name="dataset" value="oranges"> Oranges</label>
-</form>
-<script src="http://d3js.org/d3.v3.min.js"></script>
+<body>
+<script src="d3.js"></script>
 <script>
-
-var dataset = {
-  apples: [53245, 28479, 19697, 24037, 40245],
-  oranges: [200, 200, 200, 200, 200]
-};
 
 var width = 960,
     height = 500,
-    radius = Math.min(width, height) / 2,
-    gridlines = [(radius-20)*0.2, (radius-20)*0.4, (radius-20)*0.6, (radius-20)*0.8];
+    radius = Math.min(width, height) / 2 - 10;
 
-var color = d3.scale.category20();
-
-var pie = d3.layout.pie()
-    .sort(null);
+var color = d3.scale.ordinal()
+    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
 var arc = d3.svg.arc()
-    .innerRadius(0)
-    .outerRadius(radius - 20);
+    .outerRadius(function(d) { return 50 + (radius - 50) * d.data.percent / 100; })
+    .innerRadius(20);
+
+var pie = d3.layout.pie()
+    .sort(null)
+    .value(function(d) { return d.population; });
+
+var grid = d3.svg.area.radial()
+    .radius(150);
 
 var svg = d3.select("body").append("svg")
     .attr("width", width)
@@ -52,27 +57,28 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-var path = svg.selectAll("path")
-    .data(pie(dataset.apples))
-  .enter().append("path")
-    .attr("fill", function(d, i) { return color(i); })
-    .attr("d", arc);
+d3.csv("data.csv", function(error, data) {
 
-var circles = svg.enter().append("circle")
-                 .data(gridlines)
-                 .attr("r", function(d) {  return d; })
-                 .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");;
+  data.forEach(function(d) {
+    d.population = +d.population;
+    d.percent = d.percent;
+  });
 
-d3.selectAll("input").on("change", change);
+  var g = svg.selectAll(".arc")
+      .data(pie(data))
+    .enter().append("g")
+      .attr("class", "arc");
 
-var timeout = setTimeout(function() {
-  d3.select("input[value=\"oranges\"]").property("checked", true).each(change);
-}, 2000);
+    g.append("path")
+        .attr("d", arc)
+        .style("fill", function(d) { return color(d.data.age); });
 
-function change() {
-  clearTimeout(timeout);
-  path = path.data(pie(dataset[this.value])); // update the data
-  path.attr("d", arc); // redraw the arcs
-}
+    g.append("text")
+        .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+        .attr("dy", ".35em")
+        .style("text-anchor", "middle")
+        .text(function(d) { return d.data.age; });
+
+});
 
 </script>
