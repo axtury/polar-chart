@@ -58,6 +58,9 @@ var path = svg.selectAll("path")
     .attr("fill", function(d, i) { return color(i); })
     .attr("d", arc);
 
+var circles = path.enter().append("circle")
+                 .data(gridlines);
+
 d3.selectAll("input").on("change", change);
 
 var timeout = setTimeout(function() {
