@@ -4,12 +4,12 @@
 
 body {
   font: 10px sans-serif;
-  background: #333;
+  background: #ffffff;
 }
 
 .arc path {
   stroke: #fff;
-    stroke-width: 2px;
+    stroke-width: 1px;
 }
 
 .arc grid {
@@ -19,7 +19,7 @@ body {
 }
 
 .arc text {
-    fill:#fff;
+    fill:#000;
     font-size:12px;
     font-weight:bold;
 }
@@ -36,19 +36,19 @@ body {
 var width = 960,
     height = 500,
     radius = Math.min(width, height) / 2 - 10,
-    numTicks = 5,
+    numTicks = 3,
     sdat = [];
 
 var color = d3.scale.ordinal()
     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
 var arc = d3.svg.arc()
-    .outerRadius(function(d) { return 50 + (radius - 50) * d.data.percent / 100; })
+    .outerRadius(function(d) { return 50 + (radius - 50) * d.percent; })
     .innerRadius(20);
 
 var pie = d3.layout.pie()
     .sort(null)
-    .value(function(d) { return d.population; });
+    .value(function(d) { return d.percent; });
 
 var grid = d3.svg.area.radial()
     .radius(150);
@@ -63,10 +63,42 @@ for (i=0; i<=numTicks; i++) {
     sdat[i] = 20 + ((radius/numTicks) * i);
 }
 
-d3.csv("data.csv", function(error, data) {
+d3.csv("commercial-out.csv", function(error, data) {
+
+  data = data.filter(function(record) { return record.municipal === 'Essex'; });
+
+  data = data.map(function(record) {
+    record.el_tot = 0;
+    record.ng_tot = 0;
+    record.fo_tot = 0;
+
+    return record;
+  });
+
+  var dataTotals = data.reduce(function(aggregate, current) {
+    aggregate.el_tot += parseFloat(current.el_con_MMBTU);
+    aggregate.ng_tot += parseFloat(current.ng_con_MMBTU);
+    aggregate.fo_tot += parseFloat(current.fo_con_MMBTU);
+
+    return aggregate;
+  });
+
+  dataTotals.cent = dataTotals.el_tot + dataTotals.ng_tot + dataTotals.fo_tot;
+
+  var results = ['el', 'fo', 'ng'].map(function(type) {
+    return {
+      fuel_type: type,
+      percent: dataTotals[type+'_tot'] / dataTotals['cent'],
+      mmbtu: dataTotals[type+'_tot'],
+    };
+  });
+
+  console.log(results);
+
+  data = results;
 
   data.forEach(function(d) {
-    d.population = +d.population;
+    d.population = +d.mmbtu;
     d.percent = d.percent;
   });
 
@@ -77,22 +109,22 @@ d3.csv("data.csv", function(error, data) {
 
     g.append("path")
         .attr("d", arc)
-        .style("fill", function(d) { return color(d.data.age); });
+        .style("fill", function(d) { return color(d.data.fuel_type); });
 
     g.append("text")
         .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
         .attr("dy", ".35em")
         .style("text-anchor", "middle")
-        .text(function(d) { return d.data.age; });
+        .text(function(d) { return d.data.fuel_type; });
 
     addCircleAxes();
 });
 
 addCircleAxes = function() {
     var circleAxes, i;
-        
+
     svg.selectAll('.circle-ticks').remove();
-        
+
     circleAxes = svg.selectAll('.circle-ticks')
       .data(sdat)
       .enter().append('svg:g')
